@@ -1,0 +1,65 @@
+# Copyright (c)  2020  Fangjun Kuang (csukuangfj@gmail.com)
+
+# See ../../LICENSE for clarification regarding multiple authors
+
+name: style_check
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade flake8==3.8.3
+
+      - name: Run flake8
+        shell: bash
+        working-directory: ${{github.workspace}}
+        run: |
+          # stop the build if there are Python syntax errors or undefined names
+          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 .
+
+          # TODO(fangjun): build a docker for style check
+          #      - name: Install cppcheck
+          #        run: |
+          #          cd /tmp
+          #          git clone --depth 1 https://github.com/danmar/cppcheck.git
+          #          cd cppcheck
+          #          mkdir build
+          #          cd build
+          #          cmake ..
+          #          make -j
+          #          sudo make install
+
+      - name: Check style with cpplint
+        shell: bash
+        working-directory: ${{github.workspace}}
+        run: ./scripts/check_style_cpplint.sh
+
+        #      - name: Run cppcheck
+        #        shell: bash
+        #        working-directory: ${{github.workspace}}
+        #        run: ./scripts/run_cppcheck.sh ${{runner.workspace}}/build
