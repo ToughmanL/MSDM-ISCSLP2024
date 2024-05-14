@@ -6,8 +6,6 @@
     > This project uses the MSDM dataset. The training set, test set, and development set are divided by individuals, ensuring that data from the same person does not appear in the training, test, and development sets simultaneously. Due to the diversity of dysarthria and the limitations in data size, it is recommended to average the models before inferring on the test set.
 
 ## Task
-  此次挑战是一个输入为音视频数据的四分类任务（正常、轻度、中度、和重度构音障碍），用于自动诊断和评估构音障碍的严重程度。
-  请参照examples/MSDM/run.sh运行baseline系统
   The challenge is a four-class classification task (normal, mild, moderate, and severe dysarthria) based on audio-visual data input, aimed at the automatic diagnosis and assessment of dysarthria severity.
   Please refer to examples/MSDM/run.sh to run the baseline system.
 
