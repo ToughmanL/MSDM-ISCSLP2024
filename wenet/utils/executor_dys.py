@@ -56,13 +56,13 @@ class Executor:
                 feats = feats.to(device)
                 videos = videos.to(device)
                 target = target.to(device)
-                target = target.to(torch.int64).squeeze()
+                target = target.to(torch.int64).squeeze(-1)
                 feats_lengths = feats_lengths.to(device)
                 target_lengths = target_lengths.to(device)
                 num_utts = target_lengths.size(0)
                 if num_utts == 0:
                     continue
-                if target.shape == 0:
+                if target.shape == torch.Size([]):
                     continue
                 context = None
                 # Disable gradient synchronizations across DDP processes.

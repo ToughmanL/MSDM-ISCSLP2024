@@ -22,6 +22,7 @@ import os
 import torch
 import yaml
 from torch.utils.data import DataLoader
+import pandas as pd
 
 from wenet.dataset.dataset_dys import Dataset
 from wenet.utils.checkpoint import load_checkpoint
@@ -61,6 +62,32 @@ def get_args():
     print(args)
     return args
 
+def segment2person(data):
+    person_score = {}
+    for item in data:
+        name_ll = item['ID'].split('_')
+        if 'repeat' in item['ID']:
+            person = name_ll[1] + '_' + name_ll[3] + '_' + name_ll[2]
+        else:
+            person = name_ll[0] + '_' + name_ll[2] + '_' + name_ll[1]
+        if person not in person_score:
+            person_score[person] = [0,0,0,0]
+        label = item['label']
+        person_score[person][label] += 1
+    for person, score in person_score.items():
+        person_score[person] = score.index(max(score))
+    return person_score
+
+def person_metrics(hpy_data, ref_data):
+    ref_person_score = segment2person(ref_data)
+    hpy_person_score = segment2person(hpy_data)
+    keys = set(ref_person_score.keys()).intersection(hpy_person_score.keys())
+    # 创建真值和预测值列表
+    y_ref = [ref_person_score[key] for key in keys]
+    y_hpy = [hpy_person_score[key] for key in keys]
+    score = f1_score(y_ref, y_hpy, average='weighted')
+    return score
+    
 
 def compute_metrics(results, labels):
     predicted = results.cpu().numpy()
@@ -71,8 +98,7 @@ def compute_metrics(results, labels):
     recall = recall_score(labels, predicted, average='weighted')
     f1 = f1_score(labels, predicted, average='weighted')
     confusion_matrix_result = confusion_matrix(labels, predicted)
-    final_score = 0.3*accuracy + 0.3*precision + 0.4*recall
-    return {'accuracy': accuracy, 'precision': precision, 'recall': recall, 'f1': f1}, confusion_matrix_result, final_score
+    return {'accuracy': accuracy, 'precision': precision, 'recall': recall, 'f1': f1}, confusion_matrix_result, f1
 
 def main():
     args = get_args()
@@ -122,8 +148,8 @@ def main():
     model = model.to(device)
     model.eval()
 
-    f = open(os.path.join(args.result_dir, 'results.txt'), 'w')
-
+    # f = open(os.path.join(args.result_dir, 'results.txt'), 'w')
+    result_idlabel, ref_idlabel = [], []
     result_list, label_list = [], []
     with torch.no_grad():
         for batch_idx, batch in enumerate(test_data_loader):
@@ -131,7 +157,7 @@ def main():
             feats = feats.to(device)
             videos = videos.to(device)
             target = target.to(device)
-            target = target.to(torch.int64).squeeze()
+            target = target.to(torch.int64).squeeze(-1)
             feats_lengths = feats_lengths.to(device)
             target_lengths = target_lengths.to(device)
             results = model.decode(
@@ -144,15 +170,17 @@ def main():
             result_list.append(hpys)
             label_list.append(target)
             for i, key in enumerate(keys):
-                f.write(f'{key}\t{hpys[i]}\n')
+                result_idlabel.append({'ID':key, 'label':hpys[i].int()})
+                ref_idlabel.append({'ID':key, 'label':target[i].int()})
     results = torch.cat(result_list, dim=0)
     labels = torch.cat(label_list, dim=0)
-    aprf, confusion_matrix_result, final_score = compute_metrics(results, labels)
-    f.write(f'{aprf}\n')
-    f.close()
+    aprf, confusion_matrix_result, seg_f1 = compute_metrics(results, labels)
+    person_f1 = person_metrics(result_idlabel, ref_idlabel)
+    df = pd.DataFrame(result_idlabel)
+    df.to_csv(os.path.join(args.result_dir, 'results.csv'), index=False)
     print(aprf)
     print(confusion_matrix_result)
-    print(final_score)
+    print(person_f1*10 + seg_f1)
 
 
 if __name__ == '__main__':
