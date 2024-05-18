@@ -11,5 +11,6 @@
   请参照examples/MSDM/run.sh运行baseline系统
 
 ## 结果
-  resnet10_conformer3模型的评估模型如下：
-  {'accuracy': 0.4977704257767549, 'precision': 0.6267377505204481, 'recall': 0.4977704257767549, 'f1': 0.4304755704283422}
+  resnet18_conformer4模型的评估模型如下：
+  segment result: {'accuracy': 0.6492376294591484, 'precision': 0.7164171337161716, 'recall': 0.6492376294591484, 'f1': 0.6154456959839272}
+  final_F1: 6.13
