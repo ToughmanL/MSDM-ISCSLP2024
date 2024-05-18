@@ -170,8 +170,8 @@ def main():
             result_list.append(hpys)
             label_list.append(target)
             for i, key in enumerate(keys):
-                result_idlabel.append({'ID':key, 'label':hpys[i].int()})
-                ref_idlabel.append({'ID':key, 'label':target[i].int()})
+                result_idlabel.append({'ID':key, 'label':hpys[i].item()})
+                ref_idlabel.append({'ID':key, 'label':target[i].item()})
     results = torch.cat(result_list, dim=0)
     labels = torch.cat(label_list, dim=0)
     aprf, confusion_matrix_result, seg_f1 = compute_metrics(results, labels)
