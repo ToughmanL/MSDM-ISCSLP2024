@@ -11,5 +11,6 @@
   Please refer to examples/MSDM/run.sh to run the baseline system.
 
 ## Results
-  The evaluation model for the resnet10_conformer3 model is as follows:  
-  {'accuracy': 0.4977704257767549, 'precision': 0.6267377505204481, 'recall': 0.4977704257767549, 'f1': 0.4304755704283422}
+  The evaluation model for the resnet18_conformer4 model is as follows:  
+  segment result: {'accuracy': 0.6492376294591484, 'precision': 0.7164171337161716, 'recall': 0.6492376294591484, 'f1': 0.6154456959839272}
+  final_F1: 6.13
