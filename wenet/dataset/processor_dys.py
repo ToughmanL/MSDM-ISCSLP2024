@@ -82,12 +82,13 @@ def parse_raw(data, modarity='audio'):
         assert 'src' in sample
         json_line = sample['src']
         obj = json.loads(json_line)
-        assert 'key' in obj
+        # assert 'key' in obj
         assert 'wav' in obj
         assert 'label' in obj
-        key = obj['key']
+        
         wav_file = obj['wav']
         label = obj['label']
+        key = os.path.basename(wav_file).split('.')[0]
 
         if 'audio' in modarity:
             waveform, sample_rate = torchaudio.load(wav_file)

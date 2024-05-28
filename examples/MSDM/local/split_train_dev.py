@@ -36,12 +36,13 @@ class SplitTestTrain():
             self.data_dict[file].append(line)
   
   def is_test_person(self, line):
-    name = json.loads(line)['key']
+    wav_path = json.loads(line)['wav']
+    name = os.path.basename(wav_path).split('.')[0]
     name_ll = name.split('_')
     if 'repeat' in name:
-      person = name_ll[1] + '_' + name_ll[3] + '_' + name_ll[2]
+      person = name_ll[1] + '_' + name_ll[2] + '_' + name_ll[3]
     else:
-      person = name_ll[0] + '_' + name_ll[2] + '_' + name_ll[1]
+      person = name_ll[0] + '_' + name_ll[1] + '_' + name_ll[2]
     if person in self.dev_persons:
       return 'dev'
     else:

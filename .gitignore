@@ -1,1 +1,5 @@
 *.pyc
+examples/MSDM/data/
+examples/MSDM/exp/
+*.avi
+*.wav
