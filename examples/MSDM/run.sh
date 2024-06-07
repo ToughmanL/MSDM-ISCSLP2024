@@ -7,7 +7,7 @@
 
 # Use this to control how many gpu you use, It's 1-gpu training if you specify
 # just 1gpu, otherwise it's is multiple gpu training based on DDP in pytorch
-export CUDA_VISIBLE_DEVICES="0,1,2,3"
+export CUDA_VISIBLE_DEVICES="0,1"
 
 
 stage=1
@@ -23,8 +23,8 @@ train_set=train
 dev_set=dev
 test_sets=test
 
-# resnet_10 conformer_3drop4 conformer3_resnet10
-model_name=
+# resnet_10 conformer_3drop4 conformer3_resnet10 conformer4_resnet18
+model_name=conformer4_resnet18
 train_config=conf/train_${model_name}.yaml
 
 cmvn=true
@@ -36,7 +36,7 @@ data_type="raw"
 # checkpoint=exp/${model_name}/0.pt
 checkpoint=
 decode_checkpoint=
-average_num=10
+average_num=2
 
 . tools/parse_options.sh || exit 1;
 
@@ -46,8 +46,7 @@ set -o pipefail
 
 if [ ${stage} -le 0 ] && [ ${stop_stage} -ge 0 ]; then
   echo "Compute cmvn"
-  # Here we use all the training data, you can sample some some data to save time
-  # BUG!!! We should use the segmented data for CMVN
+  # 此处计算cmvn，如果无法创建wav.scp，可使用examples/MSDM/local/datalist2scp.py
   if $cmvn; then
     full_size=`cat data/${train_set}/wav.scp | wc -l`
     sampling_size=$((full_size / cmvn_sampling_divisor))

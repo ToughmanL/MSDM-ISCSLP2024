@@ -1,5 +1,6 @@
 ## 强调
-  + 代码说明：本项目基于WeNet工程，添加了以下文件
+  + 环境：本项目基于wenet工程，所以需要参照wenet安装环境，此外需要安装torchvision
+  + 代码说明：本项目基于WeNet工程，添加了以下文件(如果不想安装wenet可以将以下文件放入自己的wennet中)
     > wenet/bin/train_dys.py, wenet/bin/infer_dys.py, wenet/transformer/resnet_3d.py, wenet/transformer/dys_model.py, wenet/dataset/dataset_dys.py, wenet/dataset/processor_dys.py, wenet/utils/executor_dys.py, wenet/utils/init_model_dys.py
 
   + 数据说明：

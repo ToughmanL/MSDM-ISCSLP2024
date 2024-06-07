@@ -1,4 +1,5 @@
 ## Highlights
+  + Environment: this project is based on the wenet project, so we need to refer to the wenet installation environment, and we also need to install torchvision.
   + Code Description: This project is based on the WeNet project, with the addition of the following files.
     > wenet/bin/train_dys.py, wenet/bin/infer_dys.py, wenet/transformer/resnet_3d.py, wenet/transformer/dys_model.py, wenet/dataset/dataset_dys.py, wenet/dataset/processor_dys.py, wenet/utils/executor_dys.py, wenet/utils/init_model_dys.py
 

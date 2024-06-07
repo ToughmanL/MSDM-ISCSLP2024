@@ -172,15 +172,15 @@ def main():
             for i, key in enumerate(keys):
                 result_idlabel.append({'ID':key, 'label':hpys[i].item()})
                 ref_idlabel.append({'ID':key, 'label':target[i].item()})
+    df = pd.DataFrame(result_idlabel)
+    df.to_csv(os.path.join(args.result_dir, 'results.csv'), index=False)
     results = torch.cat(result_list, dim=0)
     labels = torch.cat(label_list, dim=0)
     aprf, confusion_matrix_result, seg_f1 = compute_metrics(results, labels)
-    person_f1 = person_metrics(result_idlabel, ref_idlabel)
-    df = pd.DataFrame(result_idlabel)
-    df.to_csv(os.path.join(args.result_dir, 'results.csv'), index=False)
+    # person_f1 = person_metrics(result_idlabel, ref_idlabel)
     print(aprf)
     print(confusion_matrix_result)
-    print(person_f1*10 + seg_f1)
+    # print(person_f1*10 + seg_f1)
 
 
 if __name__ == '__main__':
